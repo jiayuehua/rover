@@ -391,7 +391,7 @@ void pstate(player const& p)
     std::cout << " -> " << state_names[p.current_state()[0]] << std::endl;
 }
 
-void test()
+void rover()
 {        
 	const int N = 5;
 	player p(N,N);
@@ -419,7 +419,7 @@ void test()
 
 int main()
 {
-    test();
+    rover();
     return 0;
 }
 
