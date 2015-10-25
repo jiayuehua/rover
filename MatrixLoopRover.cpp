@@ -417,7 +417,7 @@ void test()
 }
 }
 
-int SMatrixEntryExit_testmain()
+int main()
 {
     test();
     return 0;
