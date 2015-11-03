@@ -207,7 +207,7 @@ public:
 // Pick a back-end
 typedef msm::back::state_machine<Timerotate2q_Machine> player;
 //
-// Testing utilities.
+// 
 //
 static char const* const state_names[] = { "Right", "Left", "End"};
 void pstate(player const& p)
@@ -216,7 +216,7 @@ void pstate(player const& p)
     std::cout << " -> " << state_names[p.current_state()[0]] << std::endl;
 }
 
-void test()
+void rover()
 {        
 	const int N = 5;
 	int a[N][N];
@@ -249,8 +249,8 @@ void test()
 }
 }
 
-int timer2q_main()
+int main()
 {
-    test();
+    rover();
     return 0;
 }

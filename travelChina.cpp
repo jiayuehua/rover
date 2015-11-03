@@ -7,55 +7,55 @@ namespace mfront = boost::msm::front;
 namespace mback = boost::msm::back;
 namespace mpl = boost::mpl;
 
-//event
-struct Push{};
-
-//state machine
-struct Door_:public mfront::state_machine_def<Door_>
-{
-	//state
-	struct Opened:public mfront::state<>
-	{
-		template <class Event, class MSM>
-		void on_entry(const Event&, MSM&)
-		{
-			std::cout<<"Opened::on_entry\n";
-
-		}
-		template <class Event, class MSM>
-		void on_exit(const Event&, MSM&)
-		{
-			std::cout<<"Opened::on_exit\n";
-		}
-	};
-	struct Closed:public mfront::state<>{};
-		//action
-	void sound(const Push&)
-	{
-		std::cout<<"Door_::sound\n";
-		//transition_table
-	}
-	typedef Opened initial_state;
-	typedef Door_ d;
-	struct transition_table:public mpl::vector<
-		a_row<Opened, Push,Closed,&d::sound>,
-		a_row<Closed, Push,Opened,&d::sound>
-	>{};
-};
-typedef mback::state_machine<Door_> Door;
-int test1()
-{
-	Door d1;
-	d1.start();
-	d1.process_event(Push());
-	d1.process_event(Push());
-	d1.process_event(Push());
-	d1.process_event(Push());
-	d1.process_event(Push());
-	d1.process_event(Push());
-	d1.process_event(Push());
-	return 0;
-}
+////event
+//struct Push{};
+//
+////state machine
+//struct Door_:public mfront::state_machine_def<Door_>
+//{
+//	//state
+//	struct Opened:public mfront::state<>
+//	{
+//		template <class Event, class MSM>
+//		void on_entry(const Event&, MSM&)
+//		{
+//			std::cout<<"Opened::on_entry\n";
+//
+//		}
+//		template <class Event, class MSM>
+//		void on_exit(const Event&, MSM&)
+//		{
+//			std::cout<<"Opened::on_exit\n";
+//		}
+//	};
+//	struct Closed:public mfront::state<>{};
+//		//action
+//	void sound(const Push&)
+//	{
+//		std::cout<<"Door_::sound\n";
+//		//transition_table
+//	}
+//	typedef Opened initial_state;
+//	typedef Door_ d;
+//	struct transition_table:public mpl::vector<
+//		a_row<Opened, Push,Closed,&d::sound>,
+//		a_row<Closed, Push,Opened,&d::sound>
+//	>{};
+//};
+//typedef mback::state_machine<Door_> Door;
+//int test1()
+//{
+//	Door d1;
+//	d1.start();
+//	d1.process_event(Push());
+//	d1.process_event(Push());
+//	d1.process_event(Push());
+//	d1.process_event(Push());
+//	d1.process_event(Push());
+//	d1.process_event(Push());
+//	d1.process_event(Push());
+//	return 0;
+//}
 struct North { };
 struct South { };
 struct China:mfront::state_machine_def<China>{
@@ -134,7 +134,7 @@ struct China:mfront::state_machine_def<China>{
 	>{};
 };
 typedef mback::state_machine<China> CHINA;
-int test_meta_main()
+int main()
 {
 	CHINA c;
 	c.start();

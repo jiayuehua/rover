@@ -51,7 +51,7 @@ struct House:public mfront::state_machine_def<House>{
 };
 typedef mback::state_machine<House> HOUSE;
 }
-int test_msm_main()
+int main()
 {
 	HOUSE h;
 	h.start();

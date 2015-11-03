@@ -381,7 +381,7 @@ public:
 // Pick a back-end
 typedef msm::back::state_machine<SVisit_Machine> player;
 //
-// Testing utilities.
+// 
 //
 static char const* const state_names[] = { "Left", "Normal", "Top", "Right", "Bottom"};
 
@@ -391,7 +391,7 @@ void pstate(player const& p)
     std::cout << " -> " << state_names[p.current_state()[0]] << std::endl;
 }
 
-void rover()
+void matrix_loop_rover()
 {        
 	const int N = 5;
 	player p(N,N);
@@ -419,7 +419,7 @@ void rover()
 
 int main()
 {
-    rover();
+    matrix_loop_rover();
     return 0;
 }
 

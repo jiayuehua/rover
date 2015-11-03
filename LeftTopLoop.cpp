@@ -73,42 +73,9 @@ struct SVisit_Machine : public msm::front::state_machine_def<SVisit_Machine>
 	        std::cout << "leaving: Left" << std::endl;
 		}
     };
-    struct Bottom: public msm::front::state<> {
-        // every (optional) entry/exit methods get the event passed.
-        template <class Event,class FSM>
-        void on_entry(Event const&,FSM& ) 
-		{
-	        std::cout << "entering: Bottom" << std::endl;
-		}
-        template <class Event,class FSM>
-        void on_exit(Event const&,FSM& ) {
-	        std::cout << "leaving: Bottom" << std::endl;
-		}
-	};
-    struct Right: public msm::front::state<> {
-        // every (optional) entry/exit methods get the event passed.
-        template <class Event,class FSM>
-        void on_entry(Event const&,FSM& ) 
-		{
-	        std::cout << "entering: Right" << std::endl;
-		}
-        template <class Event,class FSM>
-        void on_exit(Event const&,FSM& ) {
-	        std::cout << "leaving: Right" << std::endl;
-		}
-	};
-    struct End: public msm::front::state<> {
-        // every (optional) entry/exit methods get the event passed.
-        template <class Event,class FSM>
-        void on_entry(Event const&,FSM& ) 
-		{
-	        std::cout << "entering: End" << std::endl;
-		}
-        template <class Event,class FSM>
-        void on_exit(Event const&,FSM& ) {
-	        std::cout << "leaving: End" << std::endl;
-		}
-	};
+    struct Bottom: public msm::front::state<> {};
+    struct Right: public msm::front::state<> {};
+    struct End: public msm::front::state<> {};
   
     // the initial state of the player SM. Must be defined
     typedef Left initial_state;
@@ -119,11 +86,9 @@ private:
 	int LY_;
 	Point direction_ ;
 public:
-	SVisit_Machine(int x, int y)       :x_(0),y_(0),direction_(down), LX_(x), LY_(y)
-	{
+	SVisit_Machine()       :x_(0),y_(0),direction_(down){
 	}
-	void print()const
-	{
+	void print()const{
 		//std::cout<<"("<<x_<<","<<y_<<")";
 	}
 	Point get()const
@@ -133,18 +98,6 @@ public:
 	int get(int)const
 	{
 		return x_* LX_ + y_;
-	}
-	bool touch_right_border(play const&)
-	{
-		if (y_+ direction_.second == LY_ -1)
-		{
-			return true;
-		}
-		return false;
-	}
-	bool not_touch_right_border(play const&p1)
-	{
-		return ! touch_right_border(p1);
 	}
 	bool touch_bottom_border(play const&)
 	{
@@ -158,7 +111,7 @@ public:
 	{
 		return ! touch_bottom_border(p1);
 	}
-	bool touch_left_border_impl(play const&)
+	bool touch_left_border(play const&)
 	{
 		if (y_+ direction_.second == 0)
 		{
@@ -166,27 +119,18 @@ public:
 		}
 		return false;
 	}
-	bool touch_left_border(play const&p1)
-	{
-		return touch_left_border_impl(p1)&& !touch_bottom_border(p1);
-	}
-
 
 	bool not_touch_left_border(play const&p1)
 	{
 		return ! touch_left_border(p1);
 	}
-	bool touch_top_border_impl(play const&)
+	bool touch_top_border(play const&)
 	{
 		if (x_+ direction_.first == 0)
 		{
 			return true;
 		}
 		return false;
-	}
-	bool touch_top_border(play const& p1)
-	{
-		return touch_top_border_impl(p1) && ! touch_right_border(p1);
 	}
 	bool not_touch_top_border(play const&p1)
 	{
@@ -241,10 +185,7 @@ public:
 		x_+=direction_.first;
 		y_+=direction_.second ;
 	} 
-    void smooth_fun(play const&p1)     { 
-		forward_fun(p1);
-		print();
-	} 
+    void smooth_fun(play const&p1)     { forward_fun(p1) ;print();} 
 	void prev_column(play const& p1)
 	{
 		--y_;
@@ -281,57 +222,22 @@ public:
 		return one_row(p1)&&touch_top_border(p1);
 	}
 
-    void down_downleft_fun(play const&p1)     {
-		direction_ = down; 
-		smooth_fun(p1) ; 
-		direction_= downleft;
-		print();
-	} 
-    void down_upright_fun(play const&p1)     {
-		direction_ = down; 
-		smooth_fun(p1) ; 
-		direction_= upright;
-		print();
-	} 
-    void right_upright_fun(play const&p1)     { 
-		direction_ = right; 
-		smooth_fun(p1) ; 
-		direction_= upright;
-		print();
-	} 
-    void right_downleft_fun(play const&p1)     { 
-		direction_ = right; 
-		smooth_fun(p1) ; 
-		direction_= downleft;
-		print();
-	} 
-	bool not_touch_border(play const&p1)
-	{
-		return
-			! touch_left_border(p1)&&
-			! touch_right_border(p1)&&
-			! touch_top_border(p1)&&
-			! touch_bottom_border(p1);
-	}
+    void down_fun(play const&p1)     { direction_ = down; smooth_fun(p1) ; direction_= upright;print();} 
+    void right_fun(play const&p1)     { direction_ = right; smooth_fun(p1) ; direction_= downleft;print();} 
 
-    // Transition table for player
+
+    // Transition table for player  //don't have right and bottom border !
     struct transition_table : mpl::vector<
         //  +---------+-------------+---------+---------------------+----------------------------+
         //    Start     Event         Next      Action				 Guard
         //  +---------+-------------+---------+---------------------+----------------------------+
-		a_row < Left  , play		, Normal  , &p::down_upright_fun>,
+		a_row < Left  , play		, Normal  , &p::down_fun>,
         //  +---------+-------------+---------+---------------------+----------------------------+
-		  row < Normal, play        , Normal  ,	&p::smooth_fun  ,  &p::not_touch_border>,
+		  row < Normal, play        , Normal  ,	&p::smooth_fun  ,  &p::not_touch_left_top_border>,
 		  row < Normal, play        , Left    ,	&p::smooth_fun  ,  &p::touch_left_border>,
 		  row < Normal, play        , Top     ,	&p::smooth_fun  ,  &p::touch_top_border>,
-		  row < Normal, play        , Right   ,	&p::smooth_fun  ,  &p::touch_right_border>,
-		  row < Normal, play        , Bottom  ,	&p::smooth_fun  ,  &p::touch_bottom_border>,
         //  +---------+-------------+---------+---------------------+----------------------------+
-		a_row < Top   , play        , Normal  ,	&p::right_downleft_fun  >,
-		row < Right , play        , Normal	  ,	&p::down_downleft_fun		, &p::not_touch_bottom_border>,
-		row < Right , play        , End		  ,	&p::down_downleft_fun		, &p::touch_bottom_border>,
-		row < Bottom, play        , Normal  ,	&p::right_upright_fun		, &p::not_touch_right_border>,
-		row < Bottom, play        , End		  ,	&p::right_upright_fun		, &p::touch_right_border  >
+		a_row < Top   , play        , Normal  ,	&p::right_fun  >
     > {};
     // Replaces the default no-transition response.
     template <class FSM,class Event>
@@ -344,28 +250,31 @@ public:
 // Pick a back-end
 typedef msm::back::state_machine<SVisit_Machine> player;
 //
-// Testing utilities.
+// 
 //
-static char const* const state_names[] = { "Left", "Normal", "Top", "Right", "Bottom"};
+static char const* const state_names[] = { "Left", "Normal", "Top"};
 void pstate(player const& p)
 {
 	std::cout<<p.current_state()[0];
     std::cout << " -> " << state_names[p.current_state()[0]] << std::endl;
 }
 
-void test()
+void rover()
 {        
 	const int N = 5;
-	player p(N,N);
+	player p;
     // needed to start the highest-level SM. This will call on_entry and mark the start of the SM
     p.start(); 
 	int n = N*N;
-	for (int i = 0; i <n; ++i)
+	for (int i = 0; i <10; ++i)
 	{
+		for (int j = 0; j<2*i-1  ; ++j)
+		{
 			//pstate(p);
 			Point point = p.get();
 			std::cout<<"("<<point.first<<","<<point.second<<")"<<" ";
 			p.process_event(play());
+		}
 			std::cout<<"\n";
 	}
     std::cout << "stop fsm" << std::endl;
@@ -373,8 +282,8 @@ void test()
 }
 }
 
-int SMatrix_main()
+int  main()
 {
-    test();
+    rover();
     return 0;
 }
